@@ -5,3 +5,8 @@ export const drawLine = (context, from, to) => {
     context.lineWidth= 2;
     context.stroke();
 }
+
+export const drawText = (context, text, x, y) => {
+    context.beginPath();
+    context.fillText(text, x, y);
+}

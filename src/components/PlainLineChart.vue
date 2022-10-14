@@ -26,6 +26,10 @@ export default defineComponent({
       type: String,
       default: 'amount',
     },
+    chartDataIncomeIdentifier: {
+      type: String,
+      default: 'daily_income',
+    },
     startDate: {
       type: String,
       default: '2022-05-01',
@@ -50,16 +54,25 @@ export default defineComponent({
     const mySlicedData = filterSeqDate(myRawData, props.startDate, props.slots);
     const myChartData = Object.entries(mySlicedData);
     const maxSpending = 600;
+    const income = data[props.chartDataIncomeIdentifier];
 
     onMounted(() => {
       canvasWidth = plainLineChart.value.width = window.innerWidth;
       canvasHeight = plainLineChart.value.height = props.height;
-      myContext =  plainLineChart.value.getContext('2d');
-      myContext.strokeStyle = plainLineChartTheme.strokeColor;
-      myContext.lineJoin =  plainLineChartTheme.strokeLineJointStyle;
-
       const lineIncrementX = canvasWidth / (props.slots - 1);
       const lineIncrementY = canvasHeight / maxSpending;
+      myContext =  plainLineChart.value.getContext('2d');
+
+      myContext.strokeStyle = plainLineChartTheme.strokeIncomeColor;
+      myContext.setLineDash(plainLineChartTheme.strokeIncomeLineDash);
+      let incomeY = (maxSpending - income) * lineIncrementY;
+      console.log('income', incomeY)
+      drawLine(myContext, {x: 0, y: incomeY}, {x: canvasWidth, y: incomeY});
+
+      myContext.strokeStyle = plainLineChartTheme.strokeColor;
+      myContext.lineJoin =  plainLineChartTheme.strokeLineJointStyle;
+      myContext.setLineDash(plainLineChartTheme.strokeLineDash);
+      
       let from = {x: 0, y: 0};
       let to = {x: 0, y: 0};
       myChartData.forEach(([key, val], k) => {
@@ -70,6 +83,11 @@ export default defineComponent({
           from.y = (maxSpending - dailySpending) * lineIncrementY;
           return;
         }else{
+          if(dailySpending >= income){
+            myContext.strokeStyle = plainLineChartTheme.strokeExceedingColor;
+          }else{
+             myContext.strokeStyle = plainLineChartTheme.strokeColor;
+          }
           to.x += lineIncrementX;
           to.y = (maxSpending - dailySpending) * lineIncrementY;
           console.error('draw', from, to);

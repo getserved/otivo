@@ -1,0 +1,206 @@
+{
+  "net_annual_salary": 52052.00,
+  "daily_income": 143.00,
+  "outgoings": {
+    "2022-05-01": [
+      {
+        "name": "Dan Murphy",
+        "amount": 120.00
+      },
+      {
+        "name": "Chemist",
+        "amount": 2.00
+      }
+    ],
+    "2022-05-02": [
+      {
+        "name": "Take away",
+        "amount": 12.00
+      }
+    ],
+    "2022-05-03": [
+      {
+        "name": "Groceries",
+        "amount": 200.00
+      },
+      {
+        "name": "Coffee",
+        "amount": 6.00
+      },
+      {
+        "name": "Rent",
+        "amount": 340.00
+      }
+    ],
+    "2022-05-04": [
+      {
+        "name": "Coffee",
+        "amount": 6.00
+      }
+    ],
+    "2022-05-05": [
+      {
+        "name": "Coffee",
+        "amount": 6.00
+      }
+    ],
+    "2022-05-06": [
+      {
+        "name": "Lunch",
+        "amount": 24.00
+      }
+    ],
+    "2022-05-07": [
+      {
+        "name": "Coffee",
+        "amount": 6.00
+      }
+    ],
+    "2022-05-08": [
+      {
+        "name": "Drinks",
+        "amount": 36.00
+      }
+    ],
+    "2022-05-09": [],
+    "2022-05-10": [
+      {
+        "name": "Rent",
+        "amount": 340.00
+      }
+    ],
+    "2022-05-11": [
+      {
+        "name": "Coffee",
+        "amount": 6.00
+      }
+    ],
+    "2022-05-12": [
+      {
+        "name": "Lunch",
+        "amount": 20.00
+      }
+    ],
+    "2022-05-13": [],
+    "2022-05-14": [
+      {
+        "name": "Groceries",
+        "amount": 120.00
+      }
+    ],
+    "2022-05-15": [
+      {
+        "name": "Phone bill",
+        "amount": 90.00
+      }
+    ],
+    "2022-05-16": [
+      {
+        "name": "Coffee",
+        "amount": 6.00
+      }
+    ],
+    "2022-05-17": [
+      {
+        "name": "Rent",
+        "amount": 340.00
+      }
+    ],
+    "2022-05-18": [
+      {
+        "name": "Coffee",
+        "amount": 6.00
+      }
+    ],
+    "2022-05-19": [
+    ],
+    "2022-05-20": [
+      {
+        "name": "Coffee",
+        "amount": 6.00
+      }
+    ],
+    "2022-05-21": [
+      {
+        "name": "Uber",
+        "amount": 43.00
+      }
+    ],
+    "2022-05-22": [
+      {
+        "name": "Coffee",
+        "amount": 6.00
+      }
+    ],
+    "2022-05-23": [
+      {
+        "name": "Groceries",
+        "amount": 98.00
+      },
+      {
+        "name": "Chemist",
+        "amount": 9.00
+      },
+      {
+        "name": "Petrol",
+        "amount": 87.00
+      },
+      {
+        "name": "Present",
+        "amount": 35.00
+      }
+    ],
+    "2022-05-24": [
+    ],
+    "2022-05-25": [
+      {
+        "name": "Rent",
+        "amount": 340.00
+      }
+    ],
+    "2022-05-26": [
+      {
+        "name": "Coffee",
+        "amount": 6.00
+      }
+    ],
+    "2022-05-27": [
+      {
+        "name": "Apple Subscription",
+        "amount": 39.00
+      }
+    ],
+    "2022-05-28": [
+      {
+        "name": "Coffee",
+        "amount": 6.00
+      }
+    ],
+    "2022-05-29": [
+      {
+        "name": "Coffee",
+        "amount": 6.00
+      }
+    ],
+    "2022-05-30": [
+      {
+        "name": "Coffee",
+        "amount": 6.00
+      },
+      {
+        "name": "Flowers",
+        "amount": 23.00
+      }
+    ],
+    "2022-05-31": [
+      {
+        "name": "Groceries",
+        "amount": 60.00
+      },
+      {
+        "name": "Coffee",
+        "amount": 6.00
+      }
+    ]
+  }
+}

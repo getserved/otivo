@@ -1,7 +1,7 @@
 <template>
   <div class="plain-line-chart">
     <canvas class="tw-w-full tw-h-full" ref="plainLineChart"></canvas>
-    <ul class="tw-flex tw-flex-row tw-justify-between">
+    <ul class="tw-flex tw-flex-row tw-justify-between tw-mt-5">
       <li :key="'date_'+date" v-for="([date]) in myChartData">
         {{ date }}
       </li>
@@ -11,7 +11,7 @@
 
 <script>
 import { defineComponent, onMounted, ref } from 'vue';
-import { sum } from '/src/utils/data.js';
+import { sum, filterSeqDate } from '/src/utils/data.js';
 import { plainLineChartTheme } from '/src/utils/theme.js';
 import { drawLine } from '/src/utils/canvas.js';
 import data from '/src/data/data.json';
@@ -25,6 +25,10 @@ export default defineComponent({
     chartDataSpendingIdentifier: {
       type: String,
       default: 'amount',
+    },
+    startDate: {
+      type: String,
+      default: '2022-05-01',
     },
     slots: {
       type: Number,
@@ -41,7 +45,10 @@ export default defineComponent({
     let myContext = null;
     let canvasWidth = 0;
     let canvasHeight = 0;
-    const myChartData = Object.entries(data[props.chartDataName]).slice(0, props.slots);
+
+    const myRawData = data[props.chartDataName];
+    const mySlicedData = filterSeqDate(myRawData, props.startDate, props.slots);
+    const myChartData = Object.entries(mySlicedData);
     const maxSpending = 600;
 
     onMounted(() => {

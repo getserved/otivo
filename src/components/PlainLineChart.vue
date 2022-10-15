@@ -14,7 +14,7 @@
 import { defineComponent, onMounted, ref } from 'vue';
 import { filterSeqDate, getCenterY, localeDate, cumulate } from '/src/utils/data.js';
 import { plainLineChartTheme } from '/src/utils/theme.js';
-import { drawLine, drawText, drawCircle } from '/src/utils/canvas.js';
+import { drawLine, drawText, drawCircle, drawPolygon} from '/src/utils/canvas.js';
 import data from '/src/data/data.json';
 
 export default defineComponent({
@@ -107,7 +107,6 @@ export default defineComponent({
           from.y = (maxSpending - dailySpending[0]) * lineIncrementY;
           return;
         }else{
-
           dailySpending.forEach((spending) => {
             if(spending >= income){
               myContext.strokeStyle = plainLineChartTheme.strokeExceedingColor;
@@ -125,8 +124,17 @@ export default defineComponent({
             from.x += lineIncrementX;
             from.y = to.y;
           });
-        }      
+        }
       });
+
+      let grd = myContext.createLinearGradient(0, 0, 0, canvasHeight);
+      plainLineChartTheme.fillPolygonColorStops.forEach(stop => {
+        Object.entries(stop).forEach(([key,val]) => {
+          grd.addColorStop(key, val);
+        });
+      });
+      myContext.fillStyle = grd;
+      drawPolygon(myContext, segments, canvasHeight);
     }
 
     onMounted(() => {

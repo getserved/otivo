@@ -8,4 +8,9 @@ export const plainLineChartTheme = {
     strokeIncomeLineDash: [10, 10],
     strokeExceedingColor: '#FD8900',
     fillIncomeColor: '#333333',
+    fillPolygonGrd: '0, canvasHeight, 0, 0',
+    fillPolygonColorStops: [
+        {'0': '#A8E0FF'},
+        {'1': '#FFFFFF'},
+    ],
 }

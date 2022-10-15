@@ -37,3 +37,19 @@ export const filterSeqDate = (raw, startDate, numDays) => {
     }
 }
 
+/* @from    segment start point (x, y)
+ * @to      segmetn end point (x, y)
+ * @x       centerX for calculation
+ * Calculate centerY by given segment
+*/
+export const getCenterY = (from, to, x) => {
+    const m = (to.y - from.y) / (to.x  - from.x);
+    const b = from.y - m * from.x;
+    return m * x + b;
+}
+
+export const localeDate = (date, locale, ...localeSpec) => {
+    let newDate = new Date(date);
+    return newDate.toLocaleDateString(locale, ...localeSpec);
+}
+

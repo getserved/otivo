@@ -1,9 +1,11 @@
 export const plainLineChartTheme = {
     strokeColor: '#0064FF',
     strokeLineDash: [],
-    strokeHoverColor: '#0064FF',
+    strokeHoverColor: '#FF0000',
+    fillHoverColor: '#FFFFFF',
     strokeLineJointStyle: 'round',
     strokeIncomeColor: '#FF0000',
-    strokeIncomeLineDash: [5, 15],
+    strokeIncomeLineDash: [10, 10],
     strokeExceedingColor: '#FD8900',
+    fillIncomeColor: '#333333',
 }

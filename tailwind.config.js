@@ -3,7 +3,11 @@ module.exports = {
   prefix: 'tw-',
   content: ['./public/**/*.html', './src/**/*.vue'],
   theme: {
-    extend: {},
+    extend: {
+      minHeight: (theme) => ({
+        ...theme('spacing'),
+      }),
+    },
   },
   plugins: [],
 }

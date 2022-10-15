@@ -12,7 +12,7 @@
 
 <script>
 import { defineComponent, onMounted, ref } from 'vue';
-import { sum, filterSeqDate, getCenterY, localeDate } from '/src/utils/data.js';
+import { filterSeqDate, getCenterY, localeDate, cumulate } from '/src/utils/data.js';
 import { plainLineChartTheme } from '/src/utils/theme.js';
 import { drawLine, drawText, drawCircle } from '/src/utils/canvas.js';
 import data from '/src/data/data.json';
@@ -101,25 +101,30 @@ export default defineComponent({
       let to = {x: 0, y: 0};
       myChartData.forEach(([key, val], k) => {
         console.log(key);
-        let dailySpending = sum(val, props.chartDataSpendingIdentifier)[props.chartDataSpendingIdentifier];
-        
+        let dailySpending = cumulate(val, props.chartDataSpendingIdentifier);
+        let trans = dailySpending.length;
         if(k === 0){
-          from.y = (maxSpending - dailySpending) * lineIncrementY;
+          from.y = (maxSpending - dailySpending[0]) * lineIncrementY;
           return;
         }else{
-          if(dailySpending >= income){
-            myContext.strokeStyle = plainLineChartTheme.strokeExceedingColor;
-          }else{
-             myContext.strokeStyle = plainLineChartTheme.strokeColor;
-          }
-          to.x += lineIncrementX;
-          to.y = (maxSpending - dailySpending) * lineIncrementY;
-          const segFrom = {...from};
-          const segTo = {...to};
-          segments[k-1] = {'from': segFrom, 'to': segTo};
-          drawLine(myContext, from, to);
-          from.x += lineIncrementX;
-          from.y = to.y;
+
+          dailySpending.forEach((spending) => {
+            if(spending >= income){
+              myContext.strokeStyle = plainLineChartTheme.strokeExceedingColor;
+            }else{
+              myContext.strokeStyle = plainLineChartTheme.strokeColor;
+            }
+            lineIncrementX = canvasWidth / (props.slots - 1) / trans;
+            to.x += lineIncrementX;
+            to.y = (maxSpending - spending) * lineIncrementY;
+   
+            const segFrom = {...from};
+            const segTo = {...to};
+            segments.push({'from': segFrom, 'to': segTo});
+            drawLine(myContext, from, to);
+            from.x += lineIncrementX;
+            from.y = to.y;
+          });
         }      
       });
     }

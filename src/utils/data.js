@@ -14,6 +14,18 @@ export const sum = (arr, identifier) => {
     , {[identifier]: 0}); 
 }
 
+/* @arr         spending array
+ * @identifier  identify the name of the spending in the object
+ *
+ * 
+*/
+export const cumulate = (arr, identifier) => {
+    let result = 0;
+    return arr.map( next => {
+        result += next[identifier];
+        return result;
+    });
+ }
 
 /* @raw                 raw date object
  * @startDate:String    start date

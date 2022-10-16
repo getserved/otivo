@@ -10,8 +10,8 @@
       <canvas class="tw-absolute tw-w-full tw-pointer-none tw-z-5 tw-left-0 tw-top-0" ref="plainLineChartOverlay" @mousemove="handleMouseMove"></canvas>
       <IndicatorDialog :title="indicatorDialog.title" :indicators="indicatorDialog.indicators" :centerX="indicatorDialog.centerX" :centerY="indicatorDialog.centerY"/>
     </div>
-    <ul class="tw-relative tw-bottom-0 tw-w-full tw-flex tw-flex-row tw-justify-between tw-mt-8">
-      <li class="tw-flex" :key="'date_'+date" v-for="([date]) in myChartData">
+    <ul class="tw-relative tw-bottom-0 tw-w-full tw-flex tw-flex-row tw-justify-between tw-mt-10">
+      <li class="tw-flex" :class="[{'tw-hidden':(k === 0)}]" :key="'date_'+date" v-for="([date], k) in myChartData">
         <span class="tw-text-xss tw-text-grey1">{{ getLocaleDate(date) }}</span>
         <button class="tw-w-10 tw-h-1 tw-bg-grey1 tw-rounded-lg tw-ml-4" :class="[{'tw-bg-otivo_blue': currentSegment?.date === date}]"></button>
       </li>
@@ -83,7 +83,7 @@ export default defineComponent({
       centerY: computed(() => currentSegment.value ? currentSegment.value.centerY : -1),
       title: computed(() => currentSegment.value && currentSegment.value.data ? `$${currentSegment.value.data.amount} ${currentSegment.value.data.name}` : null) ,
       indicators: computed(() => {
-        return currentSegment.value && currentSegment.value.data ? getSpendingIndicators(myRawData, currentSegment.value.date, getBudgets(income)) : null}),
+        return currentSegment.value && currentSegment.value.data ? getSpendingIndicators(myRawData, currentSegment.value.date, getBudgets(income), props.chartDataSpendingIdentifier) : null}),
     });
     const indicatorHeading = reactive({
       amount: computed(() => indicatorDialog?.indicators ? `$${indicatorDialog?.indicators[0].amount}`: null) ,
@@ -93,6 +93,7 @@ export default defineComponent({
 
     const myRawData = data[props.chartDataName];
     const mySlicedData = filterSeqDate(myRawData, props.startDate, props.slots);
+    console.log(mySlicedData)
     const myChartData = Object.entries(mySlicedData);
     const maxSpending = 600;
     const income = data[props.chartDataIncomeIdentifier];
@@ -134,23 +135,27 @@ export default defineComponent({
       
       let from = {x: 0, y: 0};
       let to = {x: 0, y: 0};
-
+      let size = myChartData.length;
       myChartData.forEach(([key, val], k) => {
         let dailySpending = cumulate(val, props.chartDataSpendingIdentifier);
         let trans = dailySpending.length;
         if(k === 0){
           from.y = (maxSpending - dailySpending[0].cumulate) * lineIncrementY;
           return;
-        }else{
+        } else{
           dailySpending.forEach((daily) => {
-            console.log(daily)
             let spending = daily.cumulate;
             if(spending >= income){
               mainContext.strokeStyle = plainLineChartTheme.strokeExceedingColor;
             }else{
               mainContext.strokeStyle = plainLineChartTheme.strokeColor;
             }
-            lineIncrementX = canvasWidth / (props.slots - 1) / trans;
+            // size -2 since the first data will be hidden. (size -1) is the length of drawing data, and (size -1) -1 is the interval
+            lineIncrementX = canvasWidth / (size - 2) / trans;
+            if(k === 1){
+              lineIncrementX = lineIncrementX / 2;
+            }
+            
             to.x += lineIncrementX;
             to.y = (maxSpending - spending) * lineIncrementY;
    

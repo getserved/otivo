@@ -18,10 +18,9 @@ export const sum = (arr, identifier) => {
  * @identifier  identify the name of the spending in the object
  *
  * 
-*/
+*/8
 export const cumulate = (arr, identifier) => {
-    identifier = 'amount';
-    let result = 0
+    let result = 0;
     if(arr?.length > 0){
         let test =  arr.map( next => {
             result += next[identifier];
@@ -29,7 +28,7 @@ export const cumulate = (arr, identifier) => {
         });
         return test;
     }else{
-        return [{'name': '', 'amount': 0, 'cumulate': result}];
+        return [{'name': '', [identifier]: 0, 'cumulate': result}];
     }
     
 }
@@ -39,9 +38,10 @@ export const cumulate = (arr, identifier) => {
  *
  * 
 */
-export const cumulateDays = (arr, index, days) => {
+export const cumulateDays = (arr, index, days, identifier) => {
     let len = arr.length;
     let sliced = [];
+    
     if(len > 0 && days > 0){
        if( index > days ){
             sliced = arr.slice(index - days + 1, index + 1);
@@ -49,7 +49,8 @@ export const cumulateDays = (arr, index, days) => {
             sliced = arr.slice(0, index);
        }
        return sliced.reduce((last, next) => {
-            return [null, {cumulate: (last[1].cumulate + cumulate(next[1], 'amount')[next[1].length - 1].cumulate)}];
+            let cumulateIndex = next[1].length > 0? next[1].length -1 : 0;
+            return [null, {cumulate: (last[1].cumulate + cumulate(next[1], identifier)[cumulateIndex].cumulate)}];
         }, [null,{cumulate: 0}]);
     }    
  }
@@ -59,7 +60,7 @@ export const cumulateDays = (arr, index, days) => {
  * @numDays:Number      number of days
  * filter the date array and return the sliced array
 */
-export const filterSeqDate = (raw, startDate, numDays) => {
+export const filterSeqDate = (raw, startDate, numDays, identifier) => {
     let arr = Object.entries(raw);
     let len = arr.length;
     let startId = arr.findIndex(val => val[0] === startDate);
@@ -67,12 +68,20 @@ export const filterSeqDate = (raw, startDate, numDays) => {
     if(startId >= 0) {
         endId = startId + numDays;
         if(endId < len) {
-            return Object.fromEntries(arr.slice(startId, endId));
+            return concatSeq(arr, startId, endId, identifier);
         }else{
-            return Object.fromEntries(arr.slice(startId, len));
+            return concatSeq(arr, startId, len, identifier);
         }
     }else{
         return null;
+    }
+}
+
+const concatSeq = (arr, startId, endId, identifier) => {
+    if(startId > 0) {
+        return Object.fromEntries(arr.slice(startId - 1, endId));
+    }else{
+        return Object.fromEntries([[{[identifier]: 0}], ...arr.slice(startId, endId)]);
     }
 }
 
@@ -105,14 +114,13 @@ export const getBudgets = (budget) => [{name: 'today', amount: budget, days: 1, 
 /* @dailySpending
  *
 */
-export const getSpendingIndicators = (raw, date, budgets) => {
+export const getSpendingIndicators = (raw, date, budgets, identifier) => {
     let arr = Object.entries(raw);
     return budgets.map((budget) => {
         let days = budget.days;
-        // let diff = dailySpending - budget?.amount;
         let name = budget?.name;
         let index = arr.findIndex(val => val[0] === date);
-        let diff = cumulateDays(arr, index, days)[1].cumulate - budget?.amount;
+        let diff = cumulateDays(arr, index, days, identifier)[1].cumulate - budget?.amount;
         if (diff >= 0) {
             return {icon: budget?.icon, amount: diff, short: 'over', text: `$${diff} over budget ${name}`};
         }else{

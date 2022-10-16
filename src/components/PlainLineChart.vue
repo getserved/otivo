@@ -12,7 +12,7 @@
     </div>
     <ul class="tw-relative tw-bottom-0 tw-w-full tw-flex tw-flex-row tw-justify-between tw-mt-8">
       <li class="tw-flex" :key="'date_'+date" v-for="([date]) in myChartData">
-        <span class="tw-text-xss">{{ getLocaleDate(date) }}</span>
+        <span class="tw-text-xss tw-text-grey1">{{ getLocaleDate(date) }}</span>
         <button class="tw-w-10 tw-h-1 tw-bg-grey1 tw-rounded-lg tw-ml-4" :class="[{'tw-bg-otivo_blue': currentSegment?.date === date}]"></button>
       </li>
     </ul>

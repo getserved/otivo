@@ -1,13 +1,15 @@
 <template>
-  <div class="plain-line-chart tw-relative tw-w-full tw-h-full tw-min-h-60 tw-overflow-hidden tw-max-w-screen-xl">
+  <div ref="plainLineChartCom"  class="plain-line-chart tw-relative tw-w-full tw-h-full tw-min-h-60 tw-overflow-hidden tw-max-w-screen-xl">
     <ChartHeading>
        <template v-slot:html>
         <div>Hello {{getUser()}}... you're already <span class="tw-font-bold">{{ indicatorHeading.amount }}</span> {{indicatorHeading.text}}</div>
        </template>
     </ChartHeading>
-    <canvas class="tw-absolute tw-w-full" ref="plainLineChart"></canvas>
-    <canvas class="tw-absolute tw-w-full tw-z-5" ref="plainLineChartOverlay" @mousemove="handleMouseMove"></canvas>
-    <IndicatorDialog :title="indicatorDialog.title" :indicators="indicatorDialog.indicators" :centerX="indicatorDialog.centerX" :centerY="indicatorDialog.centerY"/>
+    <div class="tw-relative">
+      <canvas class="tw-absolute tw-w-full" ref="plainLineChart"></canvas>
+      <canvas class="tw-absolute tw-w-full tw-pointer-none tw-z-5" ref="plainLineChartOverlay" @mousemove="handleMouseMove"></canvas>
+      <IndicatorDialog :title="indicatorDialog.title" :indicators="indicatorDialog.indicators" :centerX="indicatorDialog.centerX" :centerY="indicatorDialog.centerY"/>
+    </div>
     <ul class="tw-absolute tw-bottom-0 tw-w-full tw-flex tw-flex-row tw-justify-between tw-mt-5">
       <li class="tw-flex" :key="'date_'+date" v-for="([date]) in myChartData">
         <span class="tw-text-xss">{{ getLocaleDate(date) }}</span>
@@ -75,6 +77,7 @@ export default defineComponent({
     let plainLineChartOverlay = ref(null);
     let overlayContext = null;
     let canvasPaddingBtm = 20;
+    const plainLineChartCom = ref(null);
     const indicatorDialog = reactive({
       centerX: computed(() => currentSegment.value ? currentSegment.value.centerX : -1),
       centerY: computed(() => currentSegment.value ? currentSegment.value.centerY : -1),
@@ -95,7 +98,8 @@ export default defineComponent({
     const income = data[props.chartDataIncomeIdentifier];
 
     const handleMouseMove = (event) => {
-      const centerX = event.pageX;
+      const centerX = event.pageX - plainLineChartCom.value.offsetLeft; 
+ 
       let segment = segments.filter((seg) =>  seg.from.x <= centerX && seg.to.x >= centerX)[0];
       let centerY = getCenterY(segment.from, segment.to, centerX);
       currentSegment.value = {...segment, centerX: centerX, centerY: centerY};
@@ -168,7 +172,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      canvasWidth = plainLineChart.value.width = window.innerWidth;
+      canvasWidth = plainLineChart.value.width = plainLineChartCom.value.offsetWidth;
       canvasHeight = plainLineChart.value.height = props.height;
       lineIncrementX = canvasWidth / (props.slots - 1);
       lineIncrementY = canvasHeight / maxSpending;
@@ -198,6 +202,7 @@ export default defineComponent({
       currentSegment,
       getUser,
       indicatorHeading,
+      plainLineChartCom,
     }
   }
 })

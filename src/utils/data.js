@@ -22,8 +22,9 @@ export const sum = (arr, identifier) => {
 export const cumulate = (arr, identifier) => {
     let result = 0;
     return arr.map( next => {
+        console.log('next', next)
         result += next[identifier];
-        return result;
+        return {...next, 'cumulate':result};
     });
  }
 
@@ -60,8 +61,27 @@ export const getCenterY = (from, to, x) => {
     return m * x + b;
 }
 
-export const localeDate = (date, locale, ...localeSpec) => {
+/* @date            date string
+ * @locale          locale string
+ * @localeOptions  locale options
+ * Return formatted date
+*/
+export const localeDate = (date, locale, ...localeOptions) => {
     let newDate = new Date(date);
-    return newDate.toLocaleDateString(locale, ...localeSpec);
+    return newDate.toLocaleDateString(locale, ...localeOptions);
+}
+
+export const getBudgets = (budget) => [{name: 'today', amount: budget}, {name: 'past 7 days', amount: budget * 7}];
+
+export const getSpendingIndicators = (dailySpending, budgets) => {
+    return budgets.map((budget) => {
+        let diff = dailySpending - budget?.amount;
+        let name = budget?.name;
+        if (diff >= 0) {
+            return {icon: '', text: `$${diff} over budget ${name}`};
+        }else{
+            return {icon: '', text: `$${-diff} over budget ${name}`};
+        }
+    })
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="chart-container">
-    <PlainLineChart class="main-chart"/>
+    <PlainLineChart class="main-chart tw-overflow-x-hidden"/>
   </div>
 </template>
 

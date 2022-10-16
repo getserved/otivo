@@ -23,12 +23,12 @@ export const drawCircle = (context, x, y, r) => {
 
 export const drawPolygon = (context, segments, canvasHeight) => {
     context.beginPath();
-    const startSegment = segments[0];
+    const startSegment = segments ? segments[0]: null;
     context.moveTo(0, canvasHeight);
-    context.lineTo(startSegment.from.x, startSegment.from.y);
-    console.log('segments', segments)
-    segments.forEach( segment => {
-        console.log('seg', segment);
+    if (startSegment) {
+        context.lineTo(startSegment.from.x,  startSegment.from.y);
+    }
+    segments?.forEach( segment => {
         context.lineTo(segment.to.x, segment.to.y);
     });
     context.closePath();

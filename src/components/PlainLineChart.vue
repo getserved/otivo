@@ -1,21 +1,24 @@
 <template>
-  <div class="plain-line-chart tw-relative tw-w-full tw-h-full tw-min-h-60">
+  <div class="plain-line-chart tw-relative tw-w-full tw-h-full tw-min-h-60 tw-overflow-x-hidden">
     <canvas class="tw-absolute tw-w-full" ref="plainLineChart"></canvas>
     <canvas class="tw-absolute tw-w-full tw-z-5" ref="plainLineChartOverlay" @mousemove="handleMouseMove"></canvas>
+    <IndicatorDialog :title="indicatorDialog.title" :indicators="indicatorDialog.indicators" :centerX="indicatorDialog.centerX" :centerY="indicatorDialog.centerY"/>
     <ul class="tw-absolute tw-bottom-0 tw-w-full tw-flex tw-flex-row tw-justify-between tw-mt-5">
       <li :key="'date_'+date" v-for="([date]) in myChartData">
         {{ getLocaleDate(date) }}
       </li>
     </ul>
+
   </div>
 </template>
 
 <script>
-import { defineComponent, onMounted, ref } from 'vue';
-import { filterSeqDate, getCenterY, localeDate, cumulate } from '/src/utils/data.js';
+import { defineComponent, onMounted, ref, computed, reactive } from 'vue';
+import { filterSeqDate, getCenterY, localeDate, cumulate, getBudgets, getSpendingIndicators } from '/src/utils/data.js';
 import { plainLineChartTheme } from '/src/utils/theme.js';
 import { drawLine, drawText, drawCircle, drawPolygon} from '/src/utils/canvas.js';
 import data from '/src/data/data.json';
+import IndicatorDialog from './IndicatorDialog.vue';
 
 export default defineComponent({
   props: {
@@ -48,18 +51,29 @@ export default defineComponent({
       default: 200,
     }
   },
+  components: {
+    IndicatorDialog,
+  },
 
   setup(props) {
     let plainLineChart = ref(null);
-    let myContext = null;
+    let mainContext = null;
     let canvasWidth = 0;
     let canvasHeight = 0;
-    let segments = new Array;
+    let segments = [];
+    let currentSegment = ref(null);
     let lineIncrementX = 0;
     let lineIncrementY = 0;
     let plainLineChartOverlay = ref(null);
     let overlayContext = null;
     let canvasPaddingBtm = 20;
+    const indicatorDialog = reactive({
+      centerX: computed(() => currentSegment.value ? currentSegment.value.centerX : -1),
+      centerY: computed(() => currentSegment.value ? currentSegment.value.centerY : -1),
+      title: computed(() => currentSegment.value && currentSegment.value.data ? `$${currentSegment.value.data.amount} ${currentSegment.value.data.name}` : null) ,
+      indicators: computed(() => {
+        return currentSegment.value && currentSegment.value.data ? getSpendingIndicators(currentSegment.value.data.cumulate, getBudgets(income)) : null}),
+    });
 
     const myRawData = data[props.chartDataName];
     const mySlicedData = filterSeqDate(myRawData, props.startDate, props.slots);
@@ -71,6 +85,7 @@ export default defineComponent({
       const centerX = event.pageX;
       let segment = segments.filter((seg) =>  seg.from.x <= centerX && seg.to.x >= centerX)[0];
       let centerY = getCenterY(segment.from, segment.to, centerX);
+      currentSegment.value = {...segment, centerX: centerX, centerY: centerY};
       if(centerY !== undefined) {
         overlayContext.clearRect(0, 0, plainLineChartOverlay.value.width, plainLineChartOverlay.value.height);
         drawCircle(overlayContext, centerX, centerY, 10);
@@ -83,19 +98,21 @@ export default defineComponent({
     }
 
     function draw() {
+      
       // Draw Income Indicator
-      myContext.strokeStyle = plainLineChartTheme.strokeIncomeColor;
-      myContext.setLineDash(plainLineChartTheme.strokeIncomeLineDash);
+      mainContext.globalCompositeOperation='destination-over';
+      mainContext.strokeStyle = plainLineChartTheme.strokeIncomeColor;
+      mainContext.setLineDash(plainLineChartTheme.strokeIncomeLineDash);
       let incomeY = (maxSpending - income) * lineIncrementY;
-      drawLine(myContext, {x: 0, y: incomeY}, {x: canvasWidth, y: incomeY});
-      myContext.font = 'bold 10px Raleway';
-      myContext.fillStyle = plainLineChartTheme.fillIncomeColor;
-      drawText(myContext, props.chartDataIncomeText, 0, incomeY - 10);
+      drawLine(mainContext, {x: 0, y: incomeY}, {x: canvasWidth, y: incomeY});
+      mainContext.font = 'bold 10px Raleway';
+      mainContext.fillStyle = plainLineChartTheme.fillIncomeColor;
+      drawText(mainContext, props.chartDataIncomeText, 0, incomeY - 10);
 
       // Draw Spending Line Chart
-      myContext.strokeStyle = plainLineChartTheme.strokeColor;
-      myContext.lineJoin =  plainLineChartTheme.strokeLineJointStyle;
-      myContext.setLineDash(plainLineChartTheme.strokeLineDash);
+      mainContext.strokeStyle = plainLineChartTheme.strokeColor;
+      mainContext.lineJoin =  plainLineChartTheme.strokeLineJointStyle;
+      mainContext.setLineDash(plainLineChartTheme.strokeLineDash);
       
       let from = {x: 0, y: 0};
       let to = {x: 0, y: 0};
@@ -104,14 +121,15 @@ export default defineComponent({
         let dailySpending = cumulate(val, props.chartDataSpendingIdentifier);
         let trans = dailySpending.length;
         if(k === 0){
-          from.y = (maxSpending - dailySpending[0]) * lineIncrementY;
+          from.y = (maxSpending - dailySpending[0].cumulate) * lineIncrementY;
           return;
         }else{
-          dailySpending.forEach((spending) => {
+          dailySpending.forEach((daily) => {
+            let spending = daily.cumulate;
             if(spending >= income){
-              myContext.strokeStyle = plainLineChartTheme.strokeExceedingColor;
+              mainContext.strokeStyle = plainLineChartTheme.strokeExceedingColor;
             }else{
-              myContext.strokeStyle = plainLineChartTheme.strokeColor;
+              mainContext.strokeStyle = plainLineChartTheme.strokeColor;
             }
             lineIncrementX = canvasWidth / (props.slots - 1) / trans;
             to.x += lineIncrementX;
@@ -119,22 +137,22 @@ export default defineComponent({
    
             const segFrom = {...from};
             const segTo = {...to};
-            segments.push({'from': segFrom, 'to': segTo});
-            drawLine(myContext, from, to);
+            segments.push({'from': segFrom, 'to': segTo, 'data': daily});
+            drawLine(mainContext, from, to);
             from.x += lineIncrementX;
             from.y = to.y;
           });
         }
       });
 
-      let grd = myContext.createLinearGradient(0, 0, 0, canvasHeight);
+      let grd = mainContext.createLinearGradient(0, 0, 0, canvasHeight);
       plainLineChartTheme.fillPolygonColorStops.forEach(stop => {
         Object.entries(stop).forEach(([key,val]) => {
           grd.addColorStop(key, val);
         });
       });
-      myContext.fillStyle = grd;
-      drawPolygon(myContext, segments, canvasHeight);
+      mainContext.fillStyle = grd;
+      drawPolygon(mainContext, segments, canvasHeight);
     }
 
     onMounted(() => {
@@ -142,7 +160,7 @@ export default defineComponent({
       canvasHeight = plainLineChart.value.height = props.height;
       lineIncrementX = canvasWidth / (props.slots - 1);
       lineIncrementY = canvasHeight / maxSpending;
-      myContext = plainLineChart.value.getContext('2d');  
+      mainContext = plainLineChart.value.getContext('2d');  
       plainLineChartOverlay.value.width = canvasWidth;
       plainLineChartOverlay.value.height = canvasHeight + canvasPaddingBtm;
       overlayContext = plainLineChartOverlay.value.getContext('2d');
@@ -163,6 +181,9 @@ export default defineComponent({
       overlayContext,
       localeDate,
       getLocaleDate,
+      indicatorDialog,
+      getSpendingIndicators,
+      currentSegment,
     }
   }
 })

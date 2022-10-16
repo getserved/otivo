@@ -14,9 +14,11 @@ module.exports = {
       gold1: '#FD8900',
       green2: '#01CC9B',
       white: '#FFFFFF',
+      grey1: '#BEBEBE',
+      otivo_blue: '#0064FF',
     },
     fontSize: {
-      xss: ['0.5625rem', { lineHeight: 1.3}],
+      xss: ['0.5625rem', { lineHeight: 1}],
       xs: ['0.75rem', { lineHeight: 1.3 }],
       sm: ['0.875rem', { lineHeight: 1.3 }],
       base: ['1rem', { lineHeight: 1.3 }],

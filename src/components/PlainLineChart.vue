@@ -4,8 +4,9 @@
     <canvas class="tw-absolute tw-w-full tw-z-5" ref="plainLineChartOverlay" @mousemove="handleMouseMove"></canvas>
     <IndicatorDialog :title="indicatorDialog.title" :indicators="indicatorDialog.indicators" :centerX="indicatorDialog.centerX" :centerY="indicatorDialog.centerY"/>
     <ul class="tw-absolute tw-bottom-0 tw-w-full tw-flex tw-flex-row tw-justify-between tw-mt-5">
-      <li :key="'date_'+date" v-for="([date]) in myChartData">
-        {{ getLocaleDate(date) }}
+      <li class="tw-flex" :key="'date_'+date" v-for="([date]) in myChartData">
+        <span class="tw-text-xss">{{ getLocaleDate(date) }}</span>
+        <button class="tw-w-10 tw-h-1 tw-bg-grey1 tw-rounded-lg tw-ml-4" :class="[{'tw-bg-otivo_blue': currentSegment?.date === date}]"></button>
       </li>
     </ul>
 
@@ -137,7 +138,7 @@ export default defineComponent({
    
             const segFrom = {...from};
             const segTo = {...to};
-            segments.push({'from': segFrom, 'to': segTo, 'data': daily});
+            segments.push({'from': segFrom, 'to': segTo, 'data': daily, 'date': key});
             drawLine(mainContext, from, to);
             from.x += lineIncrementX;
             from.y = to.y;

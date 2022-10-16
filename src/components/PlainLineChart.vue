@@ -49,7 +49,7 @@ export default defineComponent({
     },
     startDate: {
       type: String,
-      default: '2022-05-21',
+      default: '2022-05-01',
     },
     slots: {
       type: Number,
@@ -83,7 +83,7 @@ export default defineComponent({
       centerY: computed(() => currentSegment.value ? currentSegment.value.centerY : -1),
       title: computed(() => currentSegment.value && currentSegment.value.data ? `$${currentSegment.value.data.amount} ${currentSegment.value.data.name}` : null) ,
       indicators: computed(() => {
-        return currentSegment.value && currentSegment.value.data ? getSpendingIndicators(currentSegment.value.data.cumulate, getBudgets(income)) : null}),
+        return currentSegment.value && currentSegment.value.data ? getSpendingIndicators(myRawData, currentSegment.value.date, getBudgets(income)) : null}),
     });
     const indicatorHeading = reactive({
       amount: computed(() => indicatorDialog?.indicators ? `$${indicatorDialog?.indicators[0].amount}`: null) ,
@@ -134,6 +134,7 @@ export default defineComponent({
       
       let from = {x: 0, y: 0};
       let to = {x: 0, y: 0};
+
       myChartData.forEach(([key, val], k) => {
         let dailySpending = cumulate(val, props.chartDataSpendingIdentifier);
         let trans = dailySpending.length;

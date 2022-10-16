@@ -20,16 +20,39 @@ export const sum = (arr, identifier) => {
  * 
 */
 export const cumulate = (arr, identifier) => {
-    let result = 0;
-    if(arr.length > 0){
-        return arr.map( next => {
+    identifier = 'amount';
+    let result = 0
+    if(arr?.length > 0){
+        let test =  arr.map( next => {
             result += next[identifier];
             return {...next, 'cumulate':result};
         });
+        return test;
     }else{
         return [{'name': '', 'amount': 0, 'cumulate': result}];
     }
     
+}
+
+/* @arr         spending array
+ * @identifier  identify the name of the spending in the object
+ *
+ * 
+*/
+export const cumulateDays = (arr, index, days) => {
+    let len = arr.length;
+    let sliced = [];
+    if(len > 0 && days > 0){
+       if( index > days ){
+            sliced = arr.slice(index - days + 1, index + 1);
+            console.log('sliced', sliced)
+       } else {
+            sliced = arr.slice(0, index);
+       }
+       return sliced.reduce((last, next) => {
+            return [null, {cumulate: (last[1].cumulate + cumulate(next[1], 'amount')[next[1].length - 1].cumulate)}];
+        }, [null,{cumulate: 0}]);
+    }    
  }
 
 /* @raw                 raw date object
@@ -75,12 +98,22 @@ export const localeDate = (date, locale, ...localeOptions) => {
     return newDate.toLocaleDateString(locale, ...localeOptions);
 }
 
-export const getBudgets = (budget) => [{name: 'today', amount: budget, icon: 'AlertIcon'}, {name: 'past 7 days', amount: budget * 7, icon: 'CheckIcon'}];
-
-export const getSpendingIndicators = (dailySpending, budgets) => {
+/* @budget  daily budget
+ * return budget arrays
+*/
+export const getBudgets = (budget) => [{name: 'today', amount: budget, days: 1, icon: 'AlertIcon'}, {name: 'past 7 days', amount: budget * 7, days: 7, icon: 'CheckIcon'}];
+// export const getBudgets = (budget) => [{name: 'past 7 days', amount: budget * 7, days: 7, icon: 'CheckIcon'}];
+/* @dailySpending
+ *
+*/
+export const getSpendingIndicators = (raw, date, budgets) => {
+    let arr = Object.entries(raw);
     return budgets.map((budget) => {
-        let diff = dailySpending - budget?.amount;
+        let days = budget.days;
+        // let diff = dailySpending - budget?.amount;
         let name = budget?.name;
+        let index = arr.findIndex(val => val[0] === date);
+        let diff = cumulateDays(arr, index, days)[1].cumulate - budget?.amount;
         if (diff >= 0) {
             return {icon: budget?.icon, amount: diff, short: 'over', text: `$${diff} over budget ${name}`};
         }else{

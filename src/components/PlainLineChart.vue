@@ -49,7 +49,7 @@ export default defineComponent({
     },
     startDate: {
       type: String,
-      default: '2022-05-01',
+      default: '2022-05-21',
     },
     slots: {
       type: Number,
@@ -79,7 +79,7 @@ export default defineComponent({
     let canvasPaddingBtm = 20;
     const plainLineChartCom = ref(null);
     const indicatorDialog = reactive({
-      centerX: computed(() => currentSegment.value ? currentSegment.value.centerX : -1),
+      centerX: computed(() => currentSegment.value ? currentSegment.value.centerX + 10 : -1),
       centerY: computed(() => currentSegment.value ? currentSegment.value.centerY : -1),
       title: computed(() => currentSegment.value && currentSegment.value.data ? `$${currentSegment.value.data.amount} ${currentSegment.value.data.name}` : null) ,
       indicators: computed(() => {
@@ -105,6 +105,7 @@ export default defineComponent({
       currentSegment.value = {...segment, centerX: centerX, centerY: centerY};
       if(centerY !== undefined) {
         overlayContext.clearRect(0, 0, plainLineChartOverlay.value.width, plainLineChartOverlay.value.height);
+        overlayContext.lineWidth = plainLineChartTheme.lineWidthOverlay;
         drawCircle(overlayContext, centerX, centerY, 10);
       }
     }

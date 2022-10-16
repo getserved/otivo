@@ -21,10 +21,15 @@ export const sum = (arr, identifier) => {
 */
 export const cumulate = (arr, identifier) => {
     let result = 0;
-    return arr.map( next => {
-        result += next[identifier];
-        return {...next, 'cumulate':result};
-    });
+    if(arr.length > 0){
+        return arr.map( next => {
+            result += next[identifier];
+            return {...next, 'cumulate':result};
+        });
+    }else{
+        return [{'cumulate': result}];
+    }
+    
  }
 
 /* @raw                 raw date object

@@ -1,0 +1,9 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+
+html, body {
+    font-family: 'Raleway', sans-serif;
+  }
+  
+  #app {
+    font-family: 'Raleway', sans-serif;
+  }

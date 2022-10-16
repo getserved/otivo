@@ -22,7 +22,6 @@ export const sum = (arr, identifier) => {
 export const cumulate = (arr, identifier) => {
     let result = 0;
     return arr.map( next => {
-        console.log('next', next)
         result += next[identifier];
         return {...next, 'cumulate':result};
     });
@@ -78,10 +77,12 @@ export const getSpendingIndicators = (dailySpending, budgets) => {
         let diff = dailySpending - budget?.amount;
         let name = budget?.name;
         if (diff >= 0) {
-            return {icon: '', text: `$${diff} over budget ${name}`};
+            return {icon: '', amount: diff, short: 'over', text: `$${diff} over budget ${name}`};
         }else{
-            return {icon: '', text: `$${-diff} over budget ${name}`};
+            return {icon: '', amount: -diff, short: 'down', text: `$${-diff} down budget ${name}`};
         }
     })
 }
+
+export const getUser = () => 'Tiger';
 

@@ -1,5 +1,10 @@
 <template>
-  <div class="plain-line-chart tw-relative tw-w-full tw-h-full tw-min-h-60 tw-overflow-x-hidden">
+  <div class="plain-line-chart tw-relative tw-w-full tw-h-full tw-min-h-60 tw-overflow-hidden tw-max-w-screen-xl">
+    <ChartHeading>
+       <template v-slot:html>
+        <div>Hello {{getUser()}}... you're already <span class="tw-font-bold">{{ indicatorHeading.amount }}</span> {{indicatorHeading.text}}</div>
+       </template>
+    </ChartHeading>
     <canvas class="tw-absolute tw-w-full" ref="plainLineChart"></canvas>
     <canvas class="tw-absolute tw-w-full tw-z-5" ref="plainLineChartOverlay" @mousemove="handleMouseMove"></canvas>
     <IndicatorDialog :title="indicatorDialog.title" :indicators="indicatorDialog.indicators" :centerX="indicatorDialog.centerX" :centerY="indicatorDialog.centerY"/>
@@ -15,11 +20,12 @@
 
 <script>
 import { defineComponent, onMounted, ref, computed, reactive } from 'vue';
-import { filterSeqDate, getCenterY, localeDate, cumulate, getBudgets, getSpendingIndicators } from '/src/utils/data.js';
+import { filterSeqDate, getCenterY, localeDate, cumulate, getBudgets, getSpendingIndicators, getUser } from '/src/utils/data.js';
 import { plainLineChartTheme } from '/src/utils/theme.js';
 import { drawLine, drawText, drawCircle, drawPolygon} from '/src/utils/canvas.js';
 import data from '/src/data/data.json';
 import IndicatorDialog from './IndicatorDialog.vue';
+import ChartHeading from './ChartHeading.vue';
 
 export default defineComponent({
   props: {
@@ -54,6 +60,7 @@ export default defineComponent({
   },
   components: {
     IndicatorDialog,
+    ChartHeading,
   },
 
   setup(props) {
@@ -75,6 +82,11 @@ export default defineComponent({
       indicators: computed(() => {
         return currentSegment.value && currentSegment.value.data ? getSpendingIndicators(currentSegment.value.data.cumulate, getBudgets(income)) : null}),
     });
+    const indicatorHeading = reactive({
+      amount: computed(() => indicatorDialog?.indicators ? `$${indicatorDialog?.indicators[0].amount}`: null) ,
+      text: computed(() => indicatorDialog?.indicators ? `$${indicatorDialog?.indicators[0].short} your daily budget...`: null) 
+    })
+
 
     const myRawData = data[props.chartDataName];
     const mySlicedData = filterSeqDate(myRawData, props.startDate, props.slots);
@@ -118,7 +130,6 @@ export default defineComponent({
       let from = {x: 0, y: 0};
       let to = {x: 0, y: 0};
       myChartData.forEach(([key, val], k) => {
-        console.log(key);
         let dailySpending = cumulate(val, props.chartDataSpendingIdentifier);
         let trans = dailySpending.length;
         if(k === 0){
@@ -185,6 +196,8 @@ export default defineComponent({
       indicatorDialog,
       getSpendingIndicators,
       currentSegment,
+      getUser,
+      indicatorHeading,
     }
   }
 })

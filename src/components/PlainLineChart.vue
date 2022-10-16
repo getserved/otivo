@@ -6,11 +6,11 @@
        </template>
     </ChartHeading>
     <div class="tw-relative">
-      <canvas class="tw-absolute tw-w-full" ref="plainLineChart"></canvas>
-      <canvas class="tw-absolute tw-w-full tw-pointer-none tw-z-5" ref="plainLineChartOverlay" @mousemove="handleMouseMove"></canvas>
+      <canvas class="tw-relative tw-w-full" ref="plainLineChart"></canvas>
+      <canvas class="tw-absolute tw-w-full tw-pointer-none tw-z-5 tw-left-0 tw-top-0" ref="plainLineChartOverlay" @mousemove="handleMouseMove"></canvas>
       <IndicatorDialog :title="indicatorDialog.title" :indicators="indicatorDialog.indicators" :centerX="indicatorDialog.centerX" :centerY="indicatorDialog.centerY"/>
     </div>
-    <ul class="tw-absolute tw-bottom-0 tw-w-full tw-flex tw-flex-row tw-justify-between tw-mt-5">
+    <ul class="tw-relative tw-bottom-0 tw-w-full tw-flex tw-flex-row tw-justify-between tw-mt-8">
       <li class="tw-flex" :key="'date_'+date" v-for="([date]) in myChartData">
         <span class="tw-text-xss">{{ getLocaleDate(date) }}</span>
         <button class="tw-w-10 tw-h-1 tw-bg-grey1 tw-rounded-lg tw-ml-4" :class="[{'tw-bg-otivo_blue': currentSegment?.date === date}]"></button>
@@ -143,6 +143,7 @@ export default defineComponent({
           return;
         }else{
           dailySpending.forEach((daily) => {
+            console.log(daily)
             let spending = daily.cumulate;
             if(spending >= income){
               mainContext.strokeStyle = plainLineChartTheme.strokeExceedingColor;

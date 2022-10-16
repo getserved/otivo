@@ -45,7 +45,6 @@ export const cumulateDays = (arr, index, days) => {
     if(len > 0 && days > 0){
        if( index > days ){
             sliced = arr.slice(index - days + 1, index + 1);
-            console.log('sliced', sliced)
        } else {
             sliced = arr.slice(0, index);
        }

@@ -27,7 +27,7 @@ export const cumulate = (arr, identifier) => {
             return {...next, 'cumulate':result};
         });
     }else{
-        return [{'cumulate': result}];
+        return [{'name': '', 'amount': 0, 'cumulate': result}];
     }
     
  }
@@ -75,16 +75,16 @@ export const localeDate = (date, locale, ...localeOptions) => {
     return newDate.toLocaleDateString(locale, ...localeOptions);
 }
 
-export const getBudgets = (budget) => [{name: 'today', amount: budget}, {name: 'past 7 days', amount: budget * 7}];
+export const getBudgets = (budget) => [{name: 'today', amount: budget, icon: 'AlertIcon'}, {name: 'past 7 days', amount: budget * 7, icon: 'CheckIcon'}];
 
 export const getSpendingIndicators = (dailySpending, budgets) => {
     return budgets.map((budget) => {
         let diff = dailySpending - budget?.amount;
         let name = budget?.name;
         if (diff >= 0) {
-            return {icon: '', amount: diff, short: 'over', text: `$${diff} over budget ${name}`};
+            return {icon: budget?.icon, amount: diff, short: 'over', text: `$${diff} over budget ${name}`};
         }else{
-            return {icon: '', amount: -diff, short: 'down', text: `$${-diff} down budget ${name}`};
+            return {icon: budget?.icon, amount: -diff, short: 'down', text: `$${-diff} down budget ${name}`};
         }
     })
 }

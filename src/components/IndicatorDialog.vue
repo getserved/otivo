@@ -1,10 +1,10 @@
 <template>
     <div class="indicator-dialog tw-absolute tw-w-full tw-z-10 tw-w-60 tw-h-20 tw-text-white tw-overflow-hidden" :class="[{'tw-hidden': (centerX < 0)}]" :style="`left: ${centerX}px; top:${centerY}px;transform: translateY(-50%);`">
-      <div class="dialog-container tw-relative tw-w-full tw-h-full tw-text-xs text-white tw-p-4 tw-bg-midnight tw-rounded-md">
-        <div class="tw-text-white tw-font-bold">{{ title }}</div>
-        <div class="tw-text-white tw-text-xss" :key="'indicator_'+k" v-for="(indicator, k) in indicators">
-            <i>{{ indicator.icon }}</i>
-            <div>{{ indicator.text }}</div>
+      <div class="dialog-container tw-relative tw-w-full tw-h-full tw-text-xs text-white tw-p-2 tw-bg-midnight tw-rounded-md">
+        <div class="tw-text-white tw-font-bold tw-mb-1">{{ title }}</div>
+        <div class="tw-text-white tw-text-xss tw-flex tw-mb-1" :key="'indicator_'+k" v-for="(indicator, k) in indicators">
+            <InlineIcon class="tw-mr-2" :name="indicator.icon" />
+            <div style="line-height: 16px">{{ indicator.text }}</div>
         </div>
       </div>
     </div>
@@ -12,6 +12,7 @@
 
 <script>
 import { defineComponent } from 'vue';
+import InlineIcon from './InlineIcon.vue';
 
 export default defineComponent({
   props: {
@@ -31,6 +32,9 @@ export default defineComponent({
         type: Number,
         default: -1,
     }
+  },
+  components: {
+    InlineIcon,
   },
 
   setup() {

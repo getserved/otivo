@@ -13,4 +13,5 @@ export const plainLineChartTheme = {
         {'1': '#FFFFFF'},
     ],
     lineWidthOverlay: 3,
+    font: 'bold 10px Raleway',
 }

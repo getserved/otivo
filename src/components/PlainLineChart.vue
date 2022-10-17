@@ -8,7 +8,7 @@
     <div class="tw-relative">
       <canvas class="tw-relative tw-w-full" ref="plainLineChart"></canvas>
       <canvas class="tw-absolute tw-w-full tw-pointer-none tw-z-5 tw-left-0 tw-top-0" ref="plainLineChartOverlay" @mousemove="handleMouseMove"></canvas>
-      <IndicatorDialog :title="indicatorDialog.title" :indicators="indicatorDialog.indicators" :centerX="indicatorDialog.centerX" :centerY="indicatorDialog.centerY"/>
+      <IndicatorDialog v-bind="indicatorDialog"/>
     </div>
     <ul class="tw-relative tw-bottom-0 tw-w-full tw-flex tw-flex-row tw-justify-between tw-mt-10">
       <li class="tw-flex" :class="[{'tw-hidden':(k === 0)}]" :key="'date_'+date" v-for="([date], k) in myChartData">
@@ -93,7 +93,6 @@ export default defineComponent({
 
     const myRawData = data[props.chartDataName];
     const mySlicedData = filterSeqDate(myRawData, props.startDate, props.slots);
-    console.log(mySlicedData)
     const myChartData = Object.entries(mySlicedData);
     const maxSpending = 600;
     const income = data[props.chartDataIncomeIdentifier];
@@ -124,7 +123,7 @@ export default defineComponent({
       mainContext.setLineDash(plainLineChartTheme.strokeIncomeLineDash);
       let incomeY = (maxSpending - income) * lineIncrementY;
       drawLine(mainContext, {x: 0, y: incomeY}, {x: canvasWidth, y: incomeY});
-      mainContext.font = 'bold 10px Raleway';
+      mainContext.font = plainLineChartTheme.font;
       mainContext.fillStyle = plainLineChartTheme.fillIncomeColor;
       drawText(mainContext, props.chartDataIncomeText, 0, incomeY - 10);
 

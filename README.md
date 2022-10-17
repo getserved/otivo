@@ -1,4 +1,11 @@
 # otivo
+This is the testing project for Otivo. Simply just draw a line chart with the given data.
+
+## Pending work
+1. Unit Testing
+2. Dynamic componentisation
+3. DIY improvement
+4. TS support
 
 ## Project setup
 ```

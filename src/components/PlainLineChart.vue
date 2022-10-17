@@ -10,7 +10,7 @@
       <canvas class="tw-absolute tw-w-full tw-pointer-none tw-z-5 tw-left-0 tw-top-0" ref="plainLineChartOverlay" @mousemove="handleMouseMove"></canvas>
       <IndicatorDialog v-bind="indicatorDialog"/>
     </div>
-    <ul class="tw-relative tw-bottom-0 tw-w-full tw-flex tw-flex-row tw-justify-between tw-mt-10">
+    <ul class="tw-relative tw-bottom-0 tw-w-full tw-flex tw-flex-row tw-justify-between tw-mt-10 tw-uppercase">
       <li class="tw-flex" :class="[{'tw-hidden':(k === 0)}]" :key="'date_'+date" v-for="([date], k) in myChartData">
         <span class="tw-text-xss tw-text-grey1">{{ getLocaleDate(date) }}</span>
         <button class="tw-w-10 tw-h-1 tw-bg-grey1 tw-rounded-lg tw-ml-4" :class="[{'tw-bg-otivo_blue': currentSegment?.date === date}]"></button>
@@ -125,7 +125,7 @@ export default defineComponent({
       drawLine(mainContext, {x: 0, y: incomeY}, {x: canvasWidth, y: incomeY});
       mainContext.font = plainLineChartTheme.font;
       mainContext.fillStyle = plainLineChartTheme.fillIncomeColor;
-      drawText(mainContext, props.chartDataIncomeText, 0, incomeY - 10);
+      drawText(mainContext, props.chartDataIncomeText.toUpperCase(), 0, incomeY - 10);
 
       // Draw Spending Line Chart
       mainContext.strokeStyle = plainLineChartTheme.strokeColor;
